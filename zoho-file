@@ -1,0 +1,113 @@
+<?php
+
+function generate_refresh_token()
+{
+    $post = [
+        'code' => '',
+        'redirect_uri' => '',
+        'client_id'  => '',
+        'client_secret' => '',
+        'grant_type' => 'authorization_code'
+    ];
+    $ch   =   curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/token");
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded')) .
+
+        $response = curl_exec($ch);
+    $response = json_encode($response);
+    var_dump($response);
+}
+generate_refresh_token();
+
+
+
+///////Access Token
+/**
+ * Generate Access Token
+ */
+function generate_access_token()
+{
+    $post = [
+        'refresh_token' => '',
+        'client_id' => '',
+        'client_secret' => '',
+        'grand_type' => 'refresh_token'
+    ];
+
+    $ch   =   curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/token");
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+
+    $response = curl_exec($ch);
+    $response = json_decode($response);
+
+    return $response;
+}
+generate_access_token();
+
+////Insert
+function insert_leads()
+{
+    $access_token = '';
+    $post_data = [
+        'data' => [
+            [
+                "Company" => '',
+                "Last_Name" => '',
+                "First_Name" => '',
+                "EmaIl" => '',
+                "State" => '',
+                "Phone" => '',
+                "Description" => '',
+            ]
+        ],
+        'trigger' => [
+            "approval",
+            "workflow",
+            "blueprint"
+        ]
+    ];
+
+
+    $ch   =   curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/Leads");
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Zoho-oauthtoken' . $access_token, 'Content-Type: application/x-www-form-urlencoded'));
+
+    $response = curl_exec($ch);
+    $response = json_decode($response);
+
+    return $response;
+}
+
+insert_leads();
+
+
+//Get Leads
+
+function get_records()
+{
+    $access_token = '';
+    $ch   =   curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://accounts.zoho.com/oauth/v2/Leads");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Zoho-oauthtoken' . $access_token, 'Content-Type: application/x-www-form-urlencoded'));
+
+    $response = curl_exec($ch);
+    // $response = json_decode($response);
+
+    return $response;
+}
+get_records();
